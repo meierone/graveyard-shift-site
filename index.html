@@ -3,29 +3,285 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Graveyard Shift</title>
+<title>Graveyard Shift – Idle-Horror</title>
+<meta name="description" content="Nachtwächter Earl hat das falsche Buch vorgelesen. Jetzt klickt er Untote weg. Ein Idle-Clicker als Horror-Komödie im Pixel-Look der 80er." />
+<meta property="og:title" content="Graveyard Shift" />
+<meta property="og:description" content="Nachtwächter Earl hat das falsche Buch vorgelesen. Jetzt klickt er Untote weg." />
+<meta property="og:image" content="https://meierone.github.io/graveyard-shift-site/assets/shots/de-hero.webp" />
 <link rel="icon" href="icon.png" />
 <style>
-  :root { color-scheme: light dark; --bg: #f6f1e4; --fg: #1b1730; --muted: #5d5670; --accent: #7e2a40; }
-  @media (prefers-color-scheme: dark) { :root { --bg: #1b1730; --fg: #ece2c6; --muted: #a99f8a; --accent: #f2a541; } }
-  body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.55 system-ui, sans-serif; }
-  main { max-width: 640px; margin: 0 auto; padding: 40px 16px 64px; text-align: center; }
-  img { width: 128px; height: 128px; image-rendering: pixelated; }
-  h1 { color: var(--accent); margin: 12px 0 4px; }
-  p { margin: 8px 0; }
-  .muted { color: var(--muted); font-size: 15px; }
-  a { color: var(--accent); }
+  @font-face { font-family: 'Pixelify'; font-weight: 700; font-display: swap; src: url(assets/fonts/pixelify-sans-latin-700-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+  @font-face { font-family: 'Pixelify'; font-weight: 700; font-display: swap; src: url(assets/fonts/pixelify-sans-latin-ext-700-normal.woff2) format('woff2'); unicode-range: U+0100-02AF, U+0304, U+0308, U+0329, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+  @font-face { font-family: 'Pixelify'; font-weight: 700; font-display: swap; src: url(assets/fonts/pixelify-sans-cyrillic-700-normal.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; }
+
+  :root {
+    --night: #1b1730; --dusk: #262043; --rule: #3d335f;
+    --bone: #ece2c6; --bone-dim: #a99f8a; --lantern: #f2a541; --ecto: #8fd6a4; --blood: #7e2a40; --rift: #b6a0f0;
+    --pixel: 'Pixelify', ui-monospace, monospace;
+    color-scheme: dark;
+  }
+  /* Die Pixelschrift wirkt in kyrillischen Überschriften ungewohnt – dort die Systemschrift */
+  :root:lang(ru), :root:lang(uk) { --pixel: system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  * { box-sizing: border-box; }
+  html { background: var(--night); }
+  body { margin: 0; background: var(--night); color: var(--bone); font: 17px/1.6 system-ui, -apple-system, 'Segoe UI', sans-serif; }
+  a { color: var(--lantern); }
+  img { display: block; max-width: 100%; }
+
+  /* Kopfzeile mit Sprachwahl */
+  .bar { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 10px; padding: 10px 16px;
+    background: rgba(27, 23, 48, 0.92); backdrop-filter: blur(6px); border-bottom: 2px solid var(--rule); }
+  .bar img { width: 32px; height: 32px; image-rendering: pixelated; }
+  .bar strong { font-family: var(--pixel); font-size: 20px; color: var(--lantern); margin-right: auto; white-space: nowrap; }
+  .langs { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+  .langs button { font: 600 13px/1 system-ui, sans-serif; padding: 6px 8px; color: var(--bone-dim); background: none;
+    border: 2px solid var(--rule); cursor: pointer; }
+  .langs button[aria-pressed='true'] { color: var(--night); background: var(--lantern); border-color: var(--lantern); }
+
+  main { max-width: 1040px; margin: 0 auto; padding: 0 16px 48px; }
+
+  /* Hero */
+  .hero { margin: 24px 0 8px; border: 4px solid #1a1424; box-shadow: 0 0 0 3px var(--lantern), 6px 6px 0 6px rgba(0,0,0,.35);
+    image-rendering: pixelated; aspect-ratio: 1024 / 500; width: 100%; height: auto; object-fit: cover; background: var(--dusk); }
+  .lead { text-align: center; padding: 20px 0 8px; }
+  .lead h1 { font-family: var(--pixel); font-size: clamp(30px, 6vw, 52px); line-height: 1.1; margin: 0; color: var(--lantern);
+    text-shadow: 3px 3px 0 var(--blood); }
+  .lead .tag { font-size: clamp(18px, 3vw, 22px); margin: 12px auto 0; max-width: 640px; }
+  .lead .story { color: var(--bone-dim); max-width: 680px; margin: 12px auto 0; }
+  .cta { display: inline-block; margin-top: 20px; padding: 12px 20px; font-family: var(--pixel); font-size: 20px;
+    color: var(--night); background: var(--lantern); border: 3px solid #1a1424; box-shadow: 4px 4px 0 #1a1424; text-decoration: none; }
+  .cta.soon { background: var(--dusk); color: var(--bone); border-color: var(--rule); box-shadow: none; cursor: default; }
+
+  h2 { font-family: var(--pixel); color: var(--lantern); font-size: 26px; margin: 48px 0 16px; text-align: center; }
+
+  /* Funktionen */
+  .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 14px; }
+  .feature { background: var(--dusk); border: 2px solid var(--rule); padding: 16px; }
+  .feature h3 { font-family: var(--pixel); font-size: 18px; margin: 0 0 6px; color: var(--ecto); }
+  .feature p { margin: 0; color: var(--bone); font-size: 16px; }
+
+  /* Screenshots */
+  .shots { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 4px 4px 14px; }
+  .shots img { flex: none; width: min(216px, 60vw); height: auto; aspect-ratio: 1 / 2; border: 3px solid #1a1424; box-shadow: 0 0 0 2px var(--rule);
+    scroll-snap-align: center; image-rendering: pixelated; background: var(--dusk); }
+
+  .facts { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 18px; color: var(--bone-dim); font-size: 15px; margin-top: 8px; }
+  .facts span::before { content: '★ '; color: var(--lantern); }
+
+  footer { border-top: 2px solid var(--rule); margin-top: 56px; padding: 24px 16px 40px; text-align: center; color: var(--bone-dim); font-size: 15px; }
+  footer p { margin: 6px 0; }
 </style>
 </head>
 <body>
-<main>
+<header class="bar">
   <img src="icon.png" alt="" />
-  <h1>Graveyard Shift</h1>
-  <p>Nachtwächter Earl hat das falsche Buch vorgelesen. Jetzt klickt er Untote weg.</p>
-  <p class="muted">Night watchman Earl read the wrong book aloud. Now he clicks away the undead.</p>
-  <p><a href="privacy/">Datenschutzerklärung · Privacy Policy</a></p>
-  <p class="muted">Fragen und Rückmeldungen · Questions and feedback:
-    <a href="https://github.com/meierone/graveyard-shift-site/issues">GitHub Issues</a></p>
+  <strong>Graveyard Shift</strong>
+  <nav class="langs" aria-label="Sprache / Language">
+    <button type="button" data-lang="de" lang="de">DE</button>
+    <button type="button" data-lang="en" lang="en">EN</button>
+    <button type="button" data-lang="fr" lang="fr">FR</button>
+    <button type="button" data-lang="pl" lang="pl">PL</button>
+    <button type="button" data-lang="ru" lang="ru">RU</button>
+    <button type="button" data-lang="uk" lang="uk">UK</button>
+  </nav>
+</header>
+
+<main>
+  <img class="hero" id="hero" src="assets/shots/de-hero.webp" width="1024" height="500" alt="Graveyard Shift" />
+
+  <section class="lead">
+    <h1>Graveyard Shift</h1>
+    <p class="tag" data-t="tag"></p>
+    <p class="story" data-t="story"></p>
+    <span class="cta soon" data-t="soon"></span>
+    <div class="facts">
+      <span data-t="f1"></span><span data-t="f2"></span><span data-t="f3"></span><span data-t="f4"></span>
+    </div>
+  </section>
+
+  <h2 data-t="featuresTitle"></h2>
+  <section class="features" id="features"></section>
+
+  <h2 data-t="shotsTitle"></h2>
+  <section class="shots" id="shots" tabindex="0"></section>
 </main>
+
+<footer>
+  <p><a href="privacy/" data-t="privacy"></a> · <a href="https://github.com/meierone/graveyard-shift-site/issues" data-t="contact"></a></p>
+  <p data-t="tribute"></p>
+  <p>© 2026 Stefan Meier (meierone)</p>
+</footer>
+
+<script>
+const T = {
+  de: {
+    title: 'Graveyard Shift – Idle-Horror',
+    tag: 'Nachtwächter Earl hat das falsche Buch vorgelesen. Jetzt klickt er Untote weg.',
+    story: 'In Hollow Pines passiert nachts nichts – bis Bestatter Krumm eine Kiste abstellt und Earl aus Langeweile den Codex Mortuum laut vorliest. Jetzt steigen die Toten aus jedem Grab. Und Earl hat Überstunden.',
+    soon: 'Bald im Google Play Store',
+    f1: 'Einmal kaufen', f2: 'Keine Werbung', f3: 'Spielt auch offline', f4: '6 Sprachen',
+    featuresTitle: 'Was dich erwartet',
+    features: [
+      ['Klicken, bis die Knochen fliegen', 'Schwachstellen, Klick-Serien und Raserei bis Stufe 5 belohnen alle, die selbst Hand anlegen.'],
+      ['Neun Helfer', 'Von Oma Hilde mit Weihwasser-Pistole bis zum reuigen Vampir – jeder verwandelt sich 25-mal.'],
+      ['26 Akte, über 50 Bosse', 'Friedhof, Schloss, Polarstation, Videothek, Geisterzug, Traumwelt – jeder Akt mit eigenem Comic.'],
+      ['Zeitrisse', 'Mittelalter, Wilder Westen, die 80er, London im Nebel, ferne Zukunft. Dazu Relikte, Flüche und ein Talentbaum.'],
+      ['Neues Spiel+', 'Endlose Nacht, Albtraum-Bosse, Klon-Earl und mit jeder Schicht ein Zusatzakt.'],
+      ['Jeden Tag etwas los', 'Stempelkarte, Tagesaufträge, Geisterjagd und der wöchentliche Boss-Ansturm.'],
+      ['Feiertage', 'Halloween, Winterfest, Ostern, Walpurgis, Freitag der 13., Valentinstag und Fasching.'],
+      ['Für alle spielbar', 'Textgröße, hoher Kontrast, weniger Effekte – und Automatik, wenn du nicht klicken willst.'],
+    ],
+    shotsTitle: 'Screenshots',
+    privacy: 'Datenschutzerklärung', contact: 'Kontakt & Feedback',
+    tribute: 'Eine Verbeugung vor den Horror-Komödien der 80er und frühen 90er. Eigene Geschichte, eigene Figuren.',
+  },
+  en: {
+    title: 'Graveyard Shift – Idle Horror',
+    tag: 'Night watchman Earl read the wrong book aloud. Now he clicks away the undead.',
+    story: 'Nothing ever happens in Hollow Pines at night – until undertaker Krumm drops off a crate and a bored Earl reads the Codex Mortuum out loud. Now the dead are climbing out of every grave. And Earl is working overtime.',
+    soon: 'Coming soon to Google Play',
+    f1: 'Buy once', f2: 'No ads', f3: 'Plays offline', f4: '6 languages',
+    featuresTitle: 'What awaits you',
+    features: [
+      ['Click until the bones fly', 'Weak spots, click streaks and frenzy up to level 5 reward everyone who gets their hands dirty.'],
+      ['Nine helpers', 'From Grandma Hilde with her holy-water pistol to a repentant vampire – each transforms 25 times.'],
+      ['26 acts, over 50 bosses', 'Cemetery, castle, polar station, video store, ghost train, dream world – every act with its own comic.'],
+      ['Time rifts', 'The Middle Ages, the Wild West, the 80s, foggy London, the far future. Plus relics, curses and a talent tree.'],
+      ['New Game+', 'The Endless Night, nightmare bosses, Clone Earl and a bonus act with every new shift.'],
+      ['Something new every day', 'Stamp card, daily tasks, ghost hunts and the weekly boss rush.'],
+      ['Holidays', 'Halloween, Winterfest, Easter, Walpurgis Night, Friday the 13th, Valentine’s Day and Carnival.'],
+      ['Playable for everyone', 'Text size, high contrast, reduced effects – and automation if you don’t feel like clicking.'],
+    ],
+    shotsTitle: 'Screenshots',
+    privacy: 'Privacy policy', contact: 'Contact & feedback',
+    tribute: 'A tribute to the horror comedies of the 80s and early 90s. Its own story, its own characters.',
+  },
+  fr: {
+    title: 'Graveyard Shift – Idle Horreur',
+    tag: 'Earl, le gardien de nuit, a lu le mauvais livre. Maintenant, il fauche les morts-vivants au clic.',
+    story: 'À Hollow Pines, il ne se passe jamais rien la nuit – jusqu’au jour où le croque-mort Krumm dépose une caisse et qu’Earl, par ennui, lit le Codex Mortuum à voix haute. Les morts sortent de chaque tombe. Et Earl fait des heures sup.',
+    soon: 'Bientôt sur Google Play',
+    f1: 'Un seul achat', f2: 'Sans pub', f3: 'Jouable hors ligne', f4: '6 langues',
+    featuresTitle: 'Au programme',
+    features: [
+      ['Cliquer jusqu’à ce que les os volent', 'Points faibles, séries de clics et frénésie jusqu’au niveau 5 récompensent ceux qui mettent la main à la pâte.'],
+      ['Neuf aides', 'De Mamie Hilde et son pistolet à eau bénite au vampire repenti – chacun se transforme 25 fois.'],
+      ['26 actes, plus de 50 boss', 'Cimetière, château, station polaire, vidéoclub, train fantôme, monde des rêves – chaque acte avec sa BD.'],
+      ['Failles temporelles', 'Moyen Âge, Far West, années 80, Londres dans le brouillard, futur lointain. Avec reliques, malédictions et arbre de talents.'],
+      ['Nouvelle partie+', 'La Nuit sans fin, des boss cauchemars, Earl le clone et un acte bonus à chaque nouvelle équipe.'],
+      ['Du nouveau chaque jour', 'Carte de pointage, missions du jour, chasse aux fantômes et assaut de boss hebdomadaire.'],
+      ['Jours de fête', 'Halloween, fête d’hiver, Pâques, nuit de Walpurgis, vendredi 13, Saint-Valentin et carnaval.'],
+      ['Accessible à tous', 'Taille du texte, contraste élevé, moins d’effets – et l’automatisation si tu n’as pas envie de cliquer.'],
+    ],
+    shotsTitle: 'Captures d’écran',
+    privacy: 'Politique de confidentialité', contact: 'Contact et retours',
+    tribute: 'Un hommage aux comédies d’horreur des années 80 et du début des années 90. Une histoire et des personnages originaux.',
+  },
+  pl: {
+    title: 'Graveyard Shift – Idle Horror',
+    tag: 'Nocny stróż Earl przeczytał złą księgę. Teraz klika nieumarłych na śmierć.',
+    story: 'W Hollow Pines nocą nic się nie dzieje – dopóki grabarz Krumm nie zostawi skrzyni, a znudzony Earl nie przeczyta na głos Codexu Mortuum. Teraz umarli wychodzą z każdego grobu. A Earl ma nadgodziny.',
+    soon: 'Wkrótce w Google Play',
+    f1: 'Kupujesz raz', f2: 'Bez reklam', f3: 'Działa offline', f4: '6 języków',
+    featuresTitle: 'Co cię czeka',
+    features: [
+      ['Klikaj, aż polecą kości', 'Słabe punkty, serie kliknięć i szał do poziomu 5 nagradzają każdego, kto sam bierze się do roboty.'],
+      ['Dziewięciu pomocników', 'Od babci Hilde z pistoletem na wodę święconą po skruszonego wampira – każdy przemienia się 25 razy.'],
+      ['26 aktów, ponad 50 bossów', 'Cmentarz, zamek, stacja polarna, wypożyczalnia kaset, pociąg widmo, świat snów – każdy akt z komiksem.'],
+      ['Szczeliny czasu', 'Średniowiecze, Dziki Zachód, lata 80., mglisty Londyn, odległa przyszłość. Do tego relikwie, klątwy i drzewko talentów.'],
+      ['Nowa gra+', 'Nieskończona Noc, bossowie-koszmary, Klon Earla i z każdą zmianą dodatkowy akt.'],
+      ['Codziennie coś się dzieje', 'Karta stempli, zadania dnia, polowanie na duchy i cotygodniowe natarcie bossów.'],
+      ['Święta', 'Halloween, święto zimy, Wielkanoc, Noc Walpurgii, piątek 13., walentynki i karnawał.'],
+      ['Dla każdego', 'Rozmiar tekstu, wysoki kontrast, mniej efektów – i automatyka, gdy nie chce ci się klikać.'],
+    ],
+    shotsTitle: 'Zrzuty ekranu',
+    privacy: 'Polityka prywatności', contact: 'Kontakt i opinie',
+    tribute: 'Ukłon w stronę horror-komedii lat 80. i wczesnych 90. Własna historia, własne postacie.',
+  },
+  ru: {
+    title: 'Graveyard Shift – Idle-хоррор',
+    tag: 'Ночной сторож Эрл прочитал не ту книгу. Теперь он отбивается от нежити кликами.',
+    story: 'В Холлоу-Пайнс ночью ничего не происходит – пока гробовщик Крумм не оставит ящик, а Эрл от скуки не прочитает вслух Кодекс Мортуум. Теперь мертвецы лезут из каждой могилы. А у Эрла сверхурочные.',
+    soon: 'Скоро в Google Play',
+    f1: 'Покупка один раз', f2: 'Без рекламы', f3: 'Работает офлайн', f4: '6 языков',
+    featuresTitle: 'Что тебя ждёт',
+    features: [
+      ['Кликай, пока кости летят', 'Слабые места, серии кликов и ярость до 5-го уровня награждают тех, кто работает сам.'],
+      ['Девять помощников', 'От бабушки Хильды с пистолетом святой воды до раскаявшегося вампира – каждый превращается 25 раз.'],
+      ['26 актов, более 50 боссов', 'Кладбище, замок, полярная станция, видеопрокат, поезд-призрак, мир снов – у каждого акта свой комикс.'],
+      ['Разломы времени', 'Средневековье, Дикий Запад, 80-е, туманный Лондон, далёкое будущее. А ещё реликвии, проклятия и древо талантов.'],
+      ['Новая игра+', 'Бесконечная ночь, боссы-кошмары, Клон Эрла и новый акт с каждой сменой.'],
+      ['Каждый день что-то новое', 'Карточка отметок, задания дня, охота на призраков и еженедельный натиск боссов.'],
+      ['Праздники', 'Хэллоуин, зимний праздник, Пасха, Вальпургиева ночь, пятница 13-е, День святого Валентина и карнавал.'],
+      ['Для всех', 'Размер текста, высокий контраст, меньше эффектов – и автоматика, если не хочется кликать.'],
+    ],
+    shotsTitle: 'Скриншоты',
+    privacy: 'Политика конфиденциальности', contact: 'Связь и отзывы',
+    tribute: 'Поклон хоррор-комедиям 80-х и начала 90-х. Своя история, свои персонажи.',
+  },
+  uk: {
+    title: 'Graveyard Shift – Idle-горор',
+    tag: 'Нічний сторож Ерл прочитав не ту книгу. Тепер відбивається від нежиті кліками.',
+    story: 'У Голлоу-Пайнс уночі нічого не відбувається – аж поки трунар Крумм не залишить скриню, а Ерл від нудьги не прочитає вголос Кодекс Мортуум. Тепер мерці лізуть із кожної могили. А в Ерла понаднормові.',
+    soon: 'Незабаром у Google Play',
+    f1: 'Купівля один раз', f2: 'Без реклами', f3: 'Працює офлайн', f4: '6 мов',
+    featuresTitle: 'Що на тебе чекає',
+    features: [
+      ['Клікай, поки кістки летять', 'Слабкі місця, серії кліків і шал до 5-го рівня винагороджують тих, хто працює сам.'],
+      ['Дев’ять помічників', 'Від бабусі Гільди з пістолетом святої води до розкаяного вампіра – кожен перетворюється 25 разів.'],
+      ['26 актів, понад 50 босів', 'Цвинтар, замок, полярна станція, відеопрокат, потяг-привид, світ снів – у кожного акту свій комікс.'],
+      ['Розломи часу', 'Середньовіччя, Дикий Захід, 80-ті, туманний Лондон, далеке майбутнє. А ще реліквії, прокляття й дерево талантів.'],
+      ['Нова гра+', 'Нескінченна ніч, боси-кошмари, Клон Ерла й новий акт із кожною зміною.'],
+      ['Щодня щось нове', 'Картка відміток, завдання дня, полювання на привидів і щотижневий натиск босів.'],
+      ['Свята', 'Гелловін, зимове свято, Великдень, Вальпургієва ніч, п’ятниця 13-те, День святого Валентина й карнавал.'],
+      ['Для всіх', 'Розмір тексту, високий контраст, менше ефектів – і автоматика, якщо не хочеться клікати.'],
+    ],
+    shotsTitle: 'Знімки екрана',
+    privacy: 'Політика конфіденційності', contact: 'Зв’язок і відгуки',
+    tribute: 'Уклін горор-комедіям 80-х і початку 90-х. Власна історія, власні персонажі.',
+  },
+};
+const SHOTS = ['1_titel', '3_friedhof', '4_boss', '6_geisterzug', '7_labor', '8_talentbaum'];
+
+function pick() {
+  const q = new URLSearchParams(location.search).get('lang');
+  if (q && T[q]) return q;
+  try { const s = localStorage.getItem('gs-site-lang'); if (s && T[s]) return s; } catch (e) { /* egal */ }
+  for (const l of navigator.languages || [navigator.language || 'de']) {
+    const k = String(l).slice(0, 2).toLowerCase();
+    if (T[k]) return k;
+  }
+  return 'en';
+}
+
+function apply(lang) {
+  const t = T[lang];
+  document.documentElement.lang = lang;
+  document.title = t.title;
+  document.querySelectorAll('[data-t]').forEach((el) => { el.textContent = t[el.dataset.t]; });
+  document.getElementById('hero').src = `assets/shots/${lang}-hero.webp`;
+  const f = document.getElementById('features');
+  f.replaceChildren(...t.features.map(([h, p]) => {
+    const d = document.createElement('article');
+    d.className = 'feature';
+    const h3 = document.createElement('h3'); h3.textContent = h;
+    const pp = document.createElement('p'); pp.textContent = p;
+    d.append(h3, pp);
+    return d;
+  }));
+  const s = document.getElementById('shots');
+  s.replaceChildren(...SHOTS.map((n) => {
+    const img = document.createElement('img');
+    img.src = `assets/shots/${lang}-${n}.webp`;
+    img.width = 432; img.height = 864; img.loading = 'lazy'; img.alt = '';
+    return img;
+  }));
+  document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  try { localStorage.setItem('gs-site-lang', lang); } catch (e) { /* nur für diese Sitzung */ }
+}
+
+document.querySelectorAll('.langs button').forEach((b) => b.addEventListener('click', () => apply(b.dataset.lang)));
+apply(pick());
+</script>
 </body>
 </html>
